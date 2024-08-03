@@ -10,7 +10,7 @@ output_dir="git_context_output"
 # Function to print usage
 print_usage() {
     echo "Usage: $0 [-t file_types] [-d max_depth] [-o output_dir]"
-    echo "  -t: Comma-separated list of file extensions (default: ''${file_types[*]})"
+    echo "  -t: Comma-separated list of file extensions (default: ${file_types[*]})"
     echo "  -d: Maximum recursion depth (default: infinite)"
     echo "  -o: Output directory (default: $output_dir)"
     exit 1
@@ -38,7 +38,7 @@ mkdir -p "$output_dir"
 
 # Build find command
 find_cmd="git ls-files"
-pattern=$(printf "\\.(%s)$" "$(IFS=\|; echo "''${file_types[*]}")")
+pattern=$(printf "\\.\(%s\)$" "$(IFS=\|; echo "${file_types[*]}")")
 find_cmd+=" | grep -E '$pattern'"
 
 # Add depth limitation if specified
@@ -47,14 +47,14 @@ if [ "$max_depth" -ge 0 ]; then
 fi
 
 echo "Debug: Find command: $find_cmd" >&2
-echo "Debug: File types: ''${file_types[*]}" >&2
+echo "Debug: File types: ${file_types[*]}" >&2
 
 # Execute find command and process files
 files_found=0
 while IFS= read -r file; do
     # Check if the file extension is in the file_types array
-    extension=''${file##*.}
-    if ! printf '%s\n' "''${file_types[@]}" | grep -qx "$extension"; then
+    extension="${file##*.}"
+    if ! printf '%s\n' "${file_types[@]}" | grep -qx "$extension"; then
         echo "Debug: Skipping file with unsupported extension: $file" >&2
         continue
     fi
