@@ -18,7 +18,7 @@
 
         gitContextCollector = pkgs.writeShellApplication {
           name = "git-context-collector";
-          runtimeInputs = with pkgs; [ bash git grep ];
+          runtimeInputs = with pkgs; [ bash git gnugrep ];
           text = builtins.readFile ./git-context-collector.sh;
         };
 
@@ -46,7 +46,7 @@
           buildInputs = with pkgs; [
             bash
             git
-            grep
+            gnugrep
             python3
             ngrok
             jq
