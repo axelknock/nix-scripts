@@ -5,7 +5,7 @@ set -euo pipefail
 # Default values
 file_types=("txt" "md" "py" "js" "html" "css" "java" "cpp" "h" "c" "sh" "rb" "json" "xml" "yaml" "yml")
 max_depth=-1  # -1 means infinite depth
-output_dir="git_context_output"
+output_dir=".llm_context"
 
 # Function to print usage
 print_usage() {

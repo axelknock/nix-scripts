@@ -16,10 +16,10 @@
           };
         };
 
-        gitContextCollector = pkgs.writeShellApplication {
-          name = "git-context-collector";
-          runtimeInputs = with pkgs; [ bash git gnugrep ];
-          text = builtins.readFile ./git-context-collector.sh;
+        llmContextCollector = pkgs.writeShellApplication {
+          name = "llm-context-collector";
+          runtimeInputs = with pkgs; [bash git gnugrep];
+          text = builtins.readFile ./llm-context-collector.sh;
         };
 
         runServer = pkgs.writeShellApplication {
@@ -31,15 +31,15 @@
       in
       {
         packages = {
-          git-context-collector = gitContextCollector;
+          git-context-collector = llmContextCollector;
           run-server = runServer;
-          default = gitContextCollector;
+          default = llmContextCollector;
         };
 
         apps = {
-          git-context-collector = flake-utils.lib.mkApp { drv = gitContextCollector; };
-          run-server = flake-utils.lib.mkApp { drv = runServer; };
-          default = flake-utils.lib.mkApp { drv = gitContextCollector; };
+          llm-context-collector = flake-utils.lib.mkApp {drv = llmContextCollector;};
+          run-server = flake-utils.lib.mkApp {drv = runServer;};
+          default = flake-utils.lib.mkApp {drv = llmContextCollector;};
         };
 
         devShell = pkgs.mkShell {
