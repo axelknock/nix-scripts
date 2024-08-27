@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+PORT=8000
+
 # Function to kill processes on exit
 cleanup() {
   echo "Stopping servers..."
@@ -10,7 +12,7 @@ trap cleanup EXIT
 
 # Start Python HTTP server in the background
 echo "Starting Python HTTP server..."
-python -m http.server 8000 &
+python -m http.server $PORT &
 PYTHON_PID=$!
 
 # Wait a moment for the server to start
@@ -19,7 +21,7 @@ sleep 2
 # Start ngrok in the foreground
 echo "Starting ngrok..."
 NGROK_AUTHTOKEN=$(cat ~/.config/sops-nix/secrets/ngrok_authtoken)
-ngrok http 8000 --authtoken "$NGROK_AUTHTOKEN" > ngrok.log 2>&1 &
+ngrok http $PORT --authtoken "$NGROK_AUTHTOKEN" > ngrok.log 2>&1 &
 NGROK_PID=$!
 
 # Wait for ngrok to output the URL
