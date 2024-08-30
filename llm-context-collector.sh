@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Default values
-file_types=("txt" "md" "py" "js" "html" "css" "java" "cpp" "h" "c" "sh" "rb" "json" "xml" "yaml" "yml")
+file_types=("txt" "md" "py" "js" "html" "css" "java" "cpp" "h" "c" "sh" "rb" "json" "xml" "yaml" "yml" "tsx" "ts" "msx" "jsx" "sql")
 max_depth=-1  # -1 means infinite depth
 output_dir=".llm_context"
 
