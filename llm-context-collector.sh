@@ -38,7 +38,7 @@ mkdir -p "$output_dir"
 
 # Build find command
 find_cmd="git ls-files"
-pattern=$(printf "\\.\(%s\)$" "$(IFS=\|; echo "${file_types[*]}")")
+pattern=$(printf "\\.(%s)$" "$(IFS=\|; echo "${file_types[*]}")")
 find_cmd+=" | grep -E '$pattern'"
 
 # Add depth limitation if specified
