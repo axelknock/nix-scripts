@@ -1,27 +1,29 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 # Default values
 file_types=("txt" "md" "py" "js" "html" "css" "java" "cpp" "h" "c" "sh" "rb" "json" "xml" "yaml" "yml" "tsx" "ts" "msx" "jsx" "sql")
 max_depth=-1  # -1 means infinite depth
 output_dir=".llm_context"
+ignore_patterns=()
 
 # Function to print usage
 print_usage() {
-    echo "Usage: $0 [-t file_types] [-d max_depth] [-o output_dir]"
+    echo "Usage: $0 [-t file_types] [-d max_depth] [-o output_dir] [-i ignore_patterns]"
     echo "  -t: Comma-separated list of file extensions (default: ${file_types[*]})"
     echo "  -d: Maximum recursion depth (default: infinite)"
     echo "  -o: Output directory (default: $output_dir)"
+    echo "  -i: Comma-separated list of patterns to ignore (e.g., 'node_modules,build,dist')"
     exit 1
 }
 
 # Parse command-line arguments
-while getopts "t:d:o:h" opt; do
+while getopts "t:d:o:i:h" opt; do
     case $opt in
         t) IFS=',' read -ra file_types <<< "$OPTARG" ;;
         d) max_depth=$OPTARG ;;
         o) output_dir=$OPTARG ;;
+        i) IFS=',' read -ra ignore_patterns <<< "$OPTARG" ;;
         h) print_usage ;;
         *) print_usage ;;
     esac
@@ -38,6 +40,12 @@ mkdir -p "$output_dir"
 
 # Build find command
 find_cmd="git ls-files"
+
+# Add ignore patterns
+for pattern in "${ignore_patterns[@]}"; do
+    find_cmd+=" | grep -v '$pattern'"
+done
+
 pattern=$(printf "\\.(%s)$" "$(IFS=\|; echo "${file_types[*]}")")
 find_cmd+=" | grep -E '$pattern'"
 
@@ -48,6 +56,7 @@ fi
 
 echo "Debug: Find command: $find_cmd" >&2
 echo "Debug: File types: ${file_types[*]}" >&2
+echo "Debug: Ignore patterns: ${ignore_patterns[*]}" >&2
 
 # Execute find command and process files
 files_found=0
@@ -58,7 +67,6 @@ while IFS= read -r file; do
         echo "Debug: Skipping file with unsupported extension: $file" >&2
         continue
     fi
-
     echo "Debug: Processing file: $file" >&2
     files_found=$((files_found + 1))
     
@@ -75,7 +83,6 @@ while IFS= read -r file; do
 done < <(eval "$find_cmd")
 
 echo "Debug: Files found and processed: $files_found" >&2
-
 if [ $files_found -eq 0 ]; then
     echo "Warning: No files were found matching the specified criteria." >&2
 else
