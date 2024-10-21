@@ -64,7 +64,7 @@ while IFS= read -r file; do
     
     # Create new file name
     # Replace path separators with underscores, prepend zero-padded index
-    new_file_name=$(printf "%03d_%s" "$files_found" "${file//\//_}" "$extension")
+    new_file_name=$(printf "%03d_%s" "$files_found" "${file//\//_}.$extension")
     
     # Copy file content with original filename as the first line
     {
